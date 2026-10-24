@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#e4e7e1">
+  <title id="page-title">E.A.R.T.H. — Random Visual Archive</title>
+
+  <style>
+    :root {
+      color-scheme: light dark;
+      --screen-bg: #e6e8e2;
+      --screen-text: #222623;
+      --card-bg: #ffffff;
+      --border-color: #cbd2cb;
+      --ease: cubic-bezier(.2, .75, .25, 1);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+    }
+
+    body {
+      margin: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      padding: clamp(10px, 2.5vw, 28px);
+      background: radial-gradient(ellipse at 50% 46%, #2b302c 0%, #111412 100%);
+      color: var(--screen-text);
+      font-family: "Courier New", Courier, monospace;
+    }
+
+    /* Curved CRT Monitor Casing */
+    .monitor {
+      position: relative;
+      isolation: isolate;
+      width: min(100%, 920px);
+      height: min(84vh, 620px);
+      min-height: min(420px, 75vh);
+      padding: clamp(14px, 2vw, 24px);
+      border: 2px solid #333935;
+      border-radius: 42px / 32px;
+      background: linear-gradient(145deg, #1d211f, #0d0f0e);
+      box-shadow: 0 30px 80px rgba(0, 0, 0, .7), inset 0 2px 4px rgba(255, 255, 255, .1);
+    }
+
+    /* Curved CRT Screen */
+    .screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      overflow: hidden;
+      isolation: isolate;
+      border: 2px solid rgba(0, 0, 0, .15);
+      border-radius: 32px / 24px;
+      background: radial-gradient(ellipse at 50% 43%, #f0f2ed 0%, var(--screen-bg) 70%, #d3d7cf 100%);
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, .12), inset 0 0 4px rgba(0, 0, 0, .25);
+    }
+
+    /* Scanlines and vignette */
+    .screen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      border-radius: inherit;
+      background:
+        linear-gradient(to bottom, transparent 0 50%, rgba(0, 0, 0, .02) 50% 100%),
+        radial-gradient(ellipse at center, transparent 48%, rgba(0, 0, 0, .15) 100%);
+      background-size: 100% 4px, 100% 100%;
+    }
+
+    /* Start screen */
+    .start-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(12px, 2.4vh, 22px);
+      padding: 22px;
+      text-align: center;
+      background: radial-gradient(ellipse at 50% 40%, #f0f2ed, #d8dcd4);
+      opacity: 1;
+      visibility: visible;
+      transition: opacity .5s var(--ease), visibility .5s;
+    }
+
+    .start-overlay.dismissed {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .earth-mark {
+      width: clamp(54px, 8vw, 76px);
+      aspect-ratio: 1;
+      object-fit: cover;
+      border: 1px solid rgba(32, 38, 33, .4);
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
+    }
+
+    .brand {
+      color: #171b18;
+      font-size: clamp(24px, 4vw, 36px);
+      font-weight: 700;
+      letter-spacing: .2em;
+    }
+
+    .subtitle {
+      max-width: 38ch;
+      color: #4d554e;
+      font-size: clamp(11px, 1.6vw, 13px);
+      line-height: 1.6;
+    }
+
+    .start-btn {
+      padding: 10px 20px;
+      border: 1px solid #fff;
+      border-right-color: #777;
+      border-bottom-color: #777;
+      background: #c8ccc4;
+      color: #1c211e;
+      font: 700 11px "Courier New", Courier, monospace;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    }
+    .start-btn:active { transform: translate(1px, 1px); }
+
+    /* Modals */
+    .modal-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 15;
+      background: rgba(20, 24, 21, 0.75);
+      backdrop-filter: blur(2px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s;
+    }
+
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+
+    .modal-box {
+      background: #e4e7e1;
+      border: 2px solid #333;
+      width: 100%;
+      max-width: 480px;
+      max-height: 80%;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      color: #222;
+      border-radius: 6px;
+    }
+
+    .modal-header {
+      background: #364238;
+      color: #fff;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: bold;
+      font-size: 11px;
+    }
+
+    .modal-close {
+      background: #b52; border: none; color: #fff; cursor: pointer; padding: 2px 6px; font-weight: bold;
+    }
+
+    .modal-body {
+      padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; max-height: 320px; font-size: 11px; line-height: 1.5;
+    }
+
+    .saved-item-row {
+      display: flex; align-items: center; gap: 10px; background: #f5f7f3; padding: 6px; border: 1px solid #b5bab2; border-radius: 3px;
+    }
+
+    .saved-thumb { width: 42px; height: 42px; object-fit: cover; border: 1px solid #888; }
+    .saved-info { flex-grow: 1; overflow: hidden; }
+    .saved-title { font-weight: bold; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #111; }
+    .saved-actions { display: flex; gap: 5px; }
+
+    /* Main Content Layout */
+    .content {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 8px;
+      padding: clamp(16px, 3.5vw, 32px) clamp(20px, 5vw, 50px) clamp(14px, 2.5vw, 22px);
+    }
+
+    .image-stage { position: relative; min-height: 0; overflow: hidden; cursor: pointer; display: grid; place-items: center; }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transform: scale(.992);
+      transition: opacity .45s var(--ease), transform .6s var(--ease);
+      will-change: opacity;
+    }
+
+    .slide.active { opacity: 1; transform: scale(1); }
+
+    /* Wikipedia Card Container */
+    .wiki-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: clamp(10px, 1.8vw, 16px);
+      max-width: min(92%, 580px);
+      max-height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, .08);
+      border-radius: 2px;
+    }
+
+    .photo-wrap {
+      position: relative;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      max-height: min(34vh, 240px);
+    }
+
+    .photo {
+      display: block;
+      max-width: 100%;
+      max-height: min(34vh, 240px);
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+
+    .caption-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .caption {
+      color: #202421;
+      font-size: clamp(11px, 1.5vw, 13px);
+      line-height: 1.45;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .caption a {
+      color: #0645ad;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .caption a:hover { text-decoration: underline; }
+
+    .wiki-icon-link {
+      flex: 0 0 auto;
+      color: #555;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 2px;
+    }
+    .wiki-icon-link svg { width: 14px; height: 14px; fill: currentColor; }
+
+    .ambient-card {
+      display: flex; flex-direction: column; align-items: center; gap: 10px; color: rgba(40, 48, 42, .75); text-align: center;
+    }
+    .ambient-symbol { width: 64px; height: 64px; display: grid; place-items: center; border: 1px solid rgba(40, 48, 42, .25); border-radius: 50%; font-size: 26px; }
+    .ambient-name { font-size: 11px; letter-spacing: .15em; }
+    .ambient-detail { font-size: 9px; letter-spacing: .08em; opacity: .7; }
+
+    /* Footer - تم تكبير الكرة الأرضية وحجم نص اللودينج هنا */
+    .footer {
+      display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 32px; color: #3b423c; font-size: 11px; font-weight: bold;
+    }
+    .footer-brand { display: inline-flex; align-items: center; gap: 8px; }
+    .signal-dot { width: 24px; height: 24px; flex: 0 0 auto; border-radius: 50%; object-fit: cover; border: 1px solid #444; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    
+    .action-btns { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+
+    .retro-action-btn {
+      background: #d4d8d0; border: 1px solid #889088; border-right-color: #444; border-bottom-color: #444;
+      color: #1c211e; padding: 4px 7px; font: 700 10px "Courier New", Courier, monospace; cursor: pointer; text-decoration: none;
+      display: inline-flex; align-items: center; justify-content: center; gap: 3px; box-shadow: 1px 1px 0 rgba(0,0,0,0.2);
+      min-width: 28px; height: 26px;
+    }
+    .retro-action-btn svg {
+      width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+    }
+    .retro-action-btn:hover { background: #e0e4dc; }
+    .retro-action-btn:active { transform: translate(1px, 1px); }
+    .btn-label { font-size: 10px; font-weight: bold; }
+  </style>
+</head>
+
+<body>
+  <main class="monitor" aria-label="E.A.R.T.H. vintage monitor display">
+    <section class="screen" aria-label="Random visual archive">
+
+      <!-- Saved Modal -->
+      <div class="modal-overlay" id="saved-modal">
+        <div class="modal-box">
+          <div class="modal-header">
+            <span id="modal-saved-title">📁 SAVED ARCHIVE</span>
+            <button class="modal-close" id="close-modal">✕</button>
+          </div>
+          <div class="modal-body" id="saved-items-container"></div>
+        </div>
+      </div>
+
+      <!-- Info Modal -->
+      <div class="modal-overlay" id="info-modal">
+        <div class="modal-box">
+          <div class="modal-header">
+            <span id="modal-info-title">ℹ️ SYSTEM INFO</span>
+            <button class="modal-close" id="close-info-modal">✕</button>
+          </div>
+          <div class="modal-body" id="info-body-content"></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="image-stage" id="image-stage" aria-live="polite" title="Double click to skip">
+          <div class="slide active" id="slide-a">
+            <div class="ambient-card" aria-hidden="true">
+              <div class="ambient-symbol">◉</div>
+              <div class="ambient-name">E.A.R.T.H. ARCHIVE</div>
+              <div class="ambient-detail">A WINDOW INTO THE UNEXPECTED</div>
+            </div>
+          </div>
+          <div class="slide" id="slide-b"></div>
+        </div>
+
+        <footer class="footer">
+          <div class="footer-brand">
+            <img src="earth.gif" alt="Earth" class="signal-dot" aria-hidden="true">
+            <span id="loading-status">loading...</span>
+            <button id="info-btn" type="button" class="retro-action-btn" title="Queue info">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+            </button>
+          </div>
+
+          <div class="action-btns">
+            <!-- Previous -->
+            <button id="prev-btn" type="button" class="retro-action-btn" title="Previous Image">
+              <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
+            <!-- Skip / Next -->
+            <button id="skip-btn" type="button" class="retro-action-btn" title="Skip to Next">
+              <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+            <!-- Pause / Resume -->
+            <button id="pause-btn" type="button" class="retro-action-btn" title="Pause / Resume">
+              <svg id="pause-icon" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+            <!-- Save -->
+            <button id="save-btn" type="button" class="retro-action-btn" title="Save to archive">
+              <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            </button>
+            <!-- Favorites -->
+            <button id="fav-btn" type="button" class="retro-action-btn" title="View Saved">
+              <svg viewBox="0 0 24 24" style="fill:currentColor;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              <span id="fav-count" class="btn-label">0</span>
+            </button>
+            <!-- Language Toggle -->
+            <button id="lang-btn" type="button" class="retro-action-btn" title="Switch Language">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+              <span id="lang-label" class="btn-label">AR</span>
+            </button>
+          </div>
+        </footer>
+      </div>
+
+      <!-- Start screen -->
+      <div class="start-overlay" id="start-overlay">
+        <img src="earth.gif" alt="Earth" class="earth-mark" aria-hidden="true">
+        <h1 class="brand" id="start-brand">E.A.R.T.H.</h1>
+        <p class="subtitle" id="start-subtitle">
+          Random Wikipedia Visual Experience<br>
+          Quiet visuals from the world around us.
+        </p>
+        <button class="start-btn" id="play-btn" type="button">
+          PRESS [SPACE] OR CLICK TO START
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <audio id="bg-music" loop preload="auto">
+    <source src="Coloured Candles.mb3.mp3" type="audio/mpeg">
+  </audio>
+
+  <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0"></script>
+
+  <script>
+    (() => {
+      'use strict';
+
+      const audio = document.getElementById('bg-music');
+      const overlay = document.getElementById('start-overlay');
+      const stage = document.getElementById('image-stage');
+      const playButton = document.getElementById('play-btn');
+      const loadingStatus = document.getElementById('loading-status');
+      const saveBtn = document.getElementById('save-btn');
+      const favBtn = document.getElementById('fav-btn');
+      const favCount = document.getElementById('fav-count');
+      const pauseBtn = document.getElementById('pause-btn');
+      const pauseIcon = document.getElementById('pause-icon');
+      const prevBtn = document.getElementById('prev-btn');
+      const skipBtn = document.getElementById('skip-btn');
+      const infoBtn = document.getElementById('info-btn');
+      const langBtn = document.getElementById('lang-btn');
+      const langLabel = document.getElementById('lang-label');
+
+      const savedModal = document.getElementById('saved-modal');
+      const closeModal = document.getElementById('close-modal');
+      const savedContainer = document.getElementById('saved-items-container');
+
+      const infoModal = document.getElementById('info-modal');
+      const closeInfoModal = document.getElementById('close-info-modal');
+      const infoBodyContent = document.getElementById('info-body-content');
+
+      const slides = [
+        document.getElementById('slide-a'),
+        document.getElementById('slide-b')
+      ];
+
+      let currentLang = 'en';
+
+      const strings = {
+        en: {
+          title: "E.A.R.T.H. — Random Visual Archive",
+          brand: "E.A.R.T.H.",
+          subtitle: "Random Wikipedia Visual Experience<br>Quiet visuals from the world around us.",
+          startBtn: "PRESS [SPACE] OR CLICK TO START",
+          ready: "Ready",
+          savedModalTitle: "📁 SAVED ARCHIVE",
+          infoModalTitle: "ℹ️ SYSTEM INFO",
+          noSaved: "No saved items yet.",
+          infoText: `
+            <p><strong>What is this status counter?</strong></p>
+            <p>It displays the background buffer queue (e.g., <code>loading... (5/12)</code>).</p>
+            <p>The system pre-fetches high-quality images and applies AI filtering in the background for zero-wait transitions.</p>
+            <p>When it shows <strong>Ready</strong>, the queue is fully primed!</p>
+          `,
+          langToggle: "AR"
+        },
+        ar: {
+          title: "E.A.R.T.H. — أرشيف البصريات العشوائي",
+          brand: "E.A.R.T.H.",
+          subtitle: "تجربة بصرية عشوائية من ويكيبيديا<br>لقطات هادئة من عالمنا ومحيطنا.",
+          startBtn: "اضغط [مفتاح المسافة] أو انقر للبدء",
+          ready: "جاهز",
+          savedModalTitle: "📁 الأرشيف المحفوظ",
+          infoModalTitle: "ℹ️ معلومات النظام",
+          noSaved: "لا توجد عناصر محفوظة حتى الآن.",
+          infoText: `
+            <p><strong>ما هو عداد التحميل؟</strong></p>
+            <p>يوضح حالة الطابور الخلفي (مثلاً: <code>تحميل... (5/12)</code>).</p>
+            <p>يقوم النظام بتحميل صور عالية الجودة وفلترتها مسبقاً في الخلفية لتتغير الصور بسلاسة تامة دون أي انتظار.</p>
+            <p>عندما يظهر <strong>جاهز</strong>، يكون الطابور ممتلئاً تماماً!</p>
+          `,
+          langToggle: "EN"
+        }
+      };
+
+      const SLIDE_INTERVAL = 7000;
+      const MAX_QUEUE_SIZE = 12;
+      const MAX_CONCURRENT_FETCHES = 3;
+      const REQUEST_TIMEOUT_MS = 10000;
+      const MAX_CANDIDATES_PER_WORKER = 12;
+
+      const queue = [];
+      const seenTitles = new Set();
+      const history = [];
+      let historyIndex = -1;
+
+      let savedItems = JSON.parse(localStorage.getItem('earth_saved_items') || '[]');
+
+      let classifier = null;
+      let inFlight = 0;
+      let isPlaying = false;
+      let isPaused = false;
+      let isAdvancing = false;
+      let timer = null;
+      let activeSlide = slides[0];
+      let currentItem = null;
+      let refillTimer = null;
+
+      function updateFavCount() {
+        favCount.textContent = savedItems.length;
+      }
+      updateFavCount();
+
+      function updateUIStrings() {
+        const s = strings[currentLang];
+        document.getElementById('page-title').textContent = s.title;
+        document.getElementById('start-brand').textContent = s.brand;
+        document.getElementById('start-subtitle').innerHTML = s.subtitle;
+        playButton.textContent = s.startBtn;
+        langLabel.textContent = s.langToggle;
+        document.getElementById('modal-saved-title').textContent = s.savedModalTitle;
+        document.getElementById('modal-info-title').textContent = s.infoModalTitle;
+        infoBodyContent.innerHTML = s.infoText;
+        updateLoadingText();
+      }
+
+      function updateLoadingText() {
+        const s = strings[currentLang];
+        if (queue.length < MAX_QUEUE_SIZE) {
+          loadingStatus.textContent = `${currentLang === 'ar' ? 'تحميل...' : 'loading...'} (${queue.length}/${MAX_QUEUE_SIZE})`;
+        } else {
+          loadingStatus.textContent = `${currentLang === 'ar' ? 'تحميل...' : 'loading...'} (${s.ready})`;
+        }
+      }
+
+      const visualCategoriesEn = [
+        'nebula', 'galaxy', 'astronomical object', 'mountain range', 'waterfall',
+        'coral reef', 'aurora', 'botanical garden', 'wildlife photography',
+        'historic architecture', 'ancient temple', 'sculpture', 'macro photography',
+        'forest landscape', 'ocean wave', 'canyon', 'glacier', 'volcano',
+        'crystal', 'traditional art', 'archaeological site', 'national park'
+      ];
+
+      const visualCategoriesAr = [
+        'سديم', 'مجرة', 'جبل', 'شلال', 'شعب مرجانية', 'شفق قطبي', 
+        'حديقة نباتية', 'عمارة تاريخية', 'معبد أثري', 'تمثال', 'تصوير ماكرو',
+        'غابة', 'محيط', 'بركان', 'بلورة', 'فن تقليدي', 'موقع أثري', 'محميّة طبيعية'
+      ];
+
+      const blockedTextTermsEn = [
+        'born', 'died', 'politician', 'actor', 'actress', 'player', 'singer',
+        'musician', 'writer', 'biography', 'president', 'minister', 'officer',
+        'general', 'war', 'battle', 'murder', 'assassination'
+      ];
+
+      const blockedTextTermsAr = [
+        'مواليد', 'وفيات', 'سياسي', 'ممثل', 'لاعب', 'مغني', 'كاتب', 'سيرة',
+        'رئيس', 'وزير', 'ضابط', 'حرب', 'معركة', 'قتل', 'اغتيال'
+      ];
+
+      async function initAI() {
+        try {
+          if (window.transformers) {
+            classifier = await window.transformers.pipeline('image-classification', 'Xenova/mobilenetv2-1.0-224', {
+              quantized: true
+            });
+          }
+        } catch (e) {
+          console.log("AI fallback mode");
+        }
+      }
+
+      async function aiFilterCheck(page, imageUrl) {
+        const title = (page.title || '').toLowerCase();
+        const extract = (page.extract || '').toLowerCase();
+        const categories = (page.categories || []).map(c => (c.title || '').toLowerCase()).join(' ');
+        const fullText = title + ' ' + extract + ' ' + categories;
+
+        const blocked = currentLang === 'ar' ? blockedTextTermsAr : blockedTextTermsEn;
+        for (let term of blocked) {
+          if (fullText.includes(term)) return false;
+        }
+
+        if (classifier) {
+          try {
+            const results = await classifier(imageUrl);
+            const hasPersonScore = results.some(res => {
+              const label = (res.label || '').toLowerCase();
+              return (label.includes('person') || label.includes('suit') || label.includes('face') || label.includes('groom') || label.includes('wig')) && res.score > 0.25;
+            });
+            if (hasPersonScore) return false;
+          } catch (err) {}
+        }
+        return true;
+      }
+
+      function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+      async function fetchJson(url) {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+        try {
+          const response = await fetch(url, { signal: controller.signal, mode: 'cors' });
+          if (!response.ok) throw new Error('API error');
+          return await response.json();
+        } finally {
+          clearTimeout(timeout);
+        }
+      }
+
+      async function decodeImage(url) {
+        const image = new Image();
+        image.decoding = 'async';
+        image.loading = 'eager';
+        image.src = url;
+        if (typeof image.decode === 'function') {
+          await image.decode();
+        } else {
+          await new Promise((resolve, reject) => {
+            image.onload = resolve;
+            image.onerror = () => reject(new Error('Image failed'));
+          });
+        }
+        return image;
+      }
+
+      async function fetchCandidate() {
+        const categoriesList = currentLang === 'ar' ? visualCategoriesAr : visualCategoriesEn;
+        const randomCategory = categoriesList[Math.floor(Math.random() * categoriesList.length)];
+        const domain = currentLang === 'ar' ? 'ar.wikipedia.org' : 'en.wikipedia.org';
+
+        const searchParams = new URLSearchParams({
+          action: 'query',
+          generator: 'search',
+          gsrsearch: randomCategory,
+          gsrnamespace: '0',
+          gsrlimit: '15',
+          prop: 'pageimages|categories|extracts',
+          piprop: 'thumbnail',
+          pithumbsize: '1100',
+          exintro: '1',
+          explaintext: '1',
+          exchars: '500',
+          cllimit: '40',
+          clshow: '!hidden',
+          format: 'json',
+          formatversion: '2',
+          origin: '*'
+        });
+
+        const data = await fetchJson(`https://${domain}/w/api.php?` + searchParams.toString());
+        const pages = data && data.query && data.query.pages;
+        if (!pages || pages.length === 0) return null;
+
+        const page = pages[Math.floor(Math.random() * pages.length)];
+        if (!page || !page.title || !page.thumbnail || !page.thumbnail.source) return null;
+        if (seenTitles.has(page.title)) return null;
+
+        const imageUrl = page.thumbnail.source;
+        const isClean = await aiFilterCheck(page, imageUrl);
+        if (!isClean) return null;
+
+        await decodeImage(imageUrl);
+        seenTitles.add(page.title);
+
+        const articleUrl = `https://${domain}/wiki/${encodeURIComponent(page.title.replace(/ /g, '_'))}`;
+
+        return {
+          title: page.title,
+          imageUrl,
+          url: articleUrl
+        };
+      }
+
+      async function fetchUsableItem() {
+        for (let attempt = 0; attempt < MAX_CANDIDATES_PER_WORKER; attempt++) {
+          try {
+            const item = await fetchCandidate();
+            if (item) return item;
+          } catch (error) {
+            await sleep(Math.min(350 * (attempt + 1), 1400));
+          }
+        }
+        return null;
+      }
+
+      function scheduleQueueRefill(delay = 0) {
+        if (refillTimer !== null) return;
+        refillTimer = setTimeout(() => {
+          refillTimer = null;
+          topUpQueue();
+        }, delay);
+      }
+
+      function topUpQueue() {
+        while (inFlight < MAX_CONCURRENT_FETCHES && queue.length + inFlight < MAX_QUEUE_SIZE) {
+          inFlight++;
+          let receivedItem = false;
+
+          fetchUsableItem()
+            .then(item => {
+              if (item) {
+                receivedItem = true;
+                queue.push(item);
+                updateLoadingText();
+              }
+              if (isPlaying && !currentItem && !isAdvancing && queue.length && !isPaused) {
+                advanceToNextItem();
+              }
+            })
+            .catch(() => {})
+            .finally(() => {
+              inFlight--;
+              if (queue.length + inFlight < MAX_QUEUE_SIZE) {
+                scheduleQueueRefill(receivedItem ? 0 : 1600);
+              }
+            });
+        }
+      }
+
+      function makeSlideContent(slide, item) {
+        slide.replaceChildren();
+
+        const card = document.createElement('div');
+        card.className = 'wiki-card';
+
+        const photoWrap = document.createElement('div');
+        photoWrap.className = 'photo-wrap';
+
+        const image = document.createElement('img');
+        image.className = 'photo';
+        image.alt = item.title;
+        image.decoding = 'async';
+        image.loading = 'eager';
+        image.src = item.imageUrl;
+        photoWrap.appendChild(image);
+
+        const captionBox = document.createElement('div');
+        captionBox.className = 'caption-box';
+
+        const caption = document.createElement('div');
+        caption.className = 'caption';
+        
+        const link = document.createElement('a');
+        link.href = item.url;
+        link.target = '_blank';
+        link.textContent = item.title;
+        
+        caption.appendChild(link);
+        caption.append(` — ${currentLang === 'ar' ? 'أرشيف ويكيبيديا البصري العشوائي' : 'Visual archive entry from Wikipedia.'}`);
+
+        const wikiBtn = document.createElement('a');
+        wikiBtn.className = 'wiki-icon-link';
+        wikiBtn.href = item.url;
+        wikiBtn.target = '_blank';
+        wikiBtn.title = 'Open Wikipedia';
+        wikiBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>';
+
+        captionBox.append(caption, wikiBtn);
+        card.append(photoWrap, captionBox);
+        slide.appendChild(card);
+
+        currentItem = item;
+      }
+
+      async function displayItem(item) {
+        isAdvancing = true;
+        const incoming = slides[0] === activeSlide ? slides[1] : slides[0];
+        makeSlideContent(incoming, item);
+
+        requestAnimationFrame(() => {
+          incoming.classList.add('active');
+          activeSlide.classList.remove('active');
+          activeSlide = incoming;
+        });
+
+        await sleep(520);
+        isAdvancing = false;
+      }
+
+      function scheduleNext(delay = SLIDE_INTERVAL) {
+        if (timer) clearTimeout(timer);
+        if (isPlaying && !isPaused) {
+          timer = setTimeout(advanceToNextItem, delay);
+        }
+      }
+
+      async function advanceToNextItem() {
+        if (!isPlaying || isAdvancing) return;
+
+        if (historyIndex < history.length - 1) {
+          if (timer) clearTimeout(timer);
+          historyIndex++;
+          await displayItem(history[historyIndex]);
+          scheduleNext();
+          return;
+        }
+
+        if (queue.length === 0) {
+          scheduleNext(450);
+          return;
+        }
+
+        if (timer) clearTimeout(timer);
+
+        const item = queue.shift();
+        updateLoadingText();
+
+        history.push(item);
+        historyIndex = history.length - 1;
+
+        await displayItem(item);
+        scheduleNext();
+        topUpQueue();
+      }
+
+      function prevItem() {
+        if (!isPlaying || isAdvancing) return;
+        if (historyIndex > 0) {
+          if (timer) clearTimeout(timer);
+          historyIndex--;
+          displayItem(history[historyIndex]);
+          scheduleNext();
+        }
+      }
+
+      function skipItem() {
+        if (!isPlaying) return;
+        if (timer) clearTimeout(timer);
+        advanceToNextItem();
+      }
+
+      prevBtn.addEventListener('click', prevItem);
+      skipBtn.addEventListener('click', skipItem);
+
+      langBtn.addEventListener('click', () => {
+        currentLang = currentLang === 'en' ? 'ar' : 'en';
+        document.documentElement.lang = currentLang;
+        document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+        
+        queue.length = 0;
+        seenTitles.clear();
+        history.length = 0;
+        historyIndex = -1;
+        currentItem = null;
+        updateUIStrings();
+        topUpQueue();
+      });
+
+      pauseBtn.addEventListener('click', () => {
+        if (!isPlaying) return;
+        isPaused = !isPaused;
+        if (isPaused) {
+          if (timer) clearTimeout(timer);
+          pauseIcon.innerHTML = '<polygon points="5 3 19 12 5 21 5 3"/>';
+        } else {
+          pauseIcon.innerHTML = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+          scheduleNext();
+        }
+      });
+
+      saveBtn.addEventListener('click', () => {
+        if (!currentItem) return;
+        if (!savedItems.some(i => i.title === currentItem.title)) {
+          savedItems.push(currentItem);
+          localStorage.setItem('earth_saved_items', JSON.stringify(savedItems));
+          updateFavCount();
+          saveBtn.style.background = '#8fa391';
+          setTimeout(() => saveBtn.style.background = '', 1200);
+        }
+      });
+
+      favBtn.addEventListener('click', () => {
+        renderSavedModal();
+        savedModal.classList.add('active');
+      });
+
+      closeModal.addEventListener('click', () => savedModal.classList.remove('active'));
+      savedModal.addEventListener('click', e => { if (e.target === savedModal) savedModal.classList.remove('active'); });
+
+      infoBtn.addEventListener('click', () => infoModal.classList.add('active'));
+      closeInfoModal.addEventListener('click', () => infoModal.classList.remove('active'));
+      infoModal.addEventListener('click', e => { if (e.target === infoModal) infoModal.classList.remove('active'); });
+
+      function renderSavedModal() {
+        savedContainer.replaceChildren();
+        if (savedItems.length === 0) {
+          const empty = document.createElement('div');
+          empty.style.cssText = 'text-align:center; padding:20px; color:#555;';
+          empty.textContent = strings[currentLang].noSaved;
+          savedContainer.append(empty);
+          return;
+        }
+        savedItems.forEach((item, index) => {
+          const row = document.createElement('div');
+          row.className = 'saved-item-row';
+          row.innerHTML = `
+            <img class="saved-thumb" src="${item.imageUrl}">
+            <div class="saved-info"><div class="saved-title">${item.title}</div></div>
+            <div class="saved-actions">
+              <a class="retro-action-btn" href="${item.url}" target="_blank" title="Read">📖</a>
+              <button class="retro-action-btn del-btn" title="Delete">❌</button>
+            </div>
+          `;
+          row.querySelector('.del-btn').addEventListener('click', () => {
+            savedItems.splice(index, 1);
+            localStorage.setItem('earth_saved_items', JSON.stringify(savedItems));
+            updateFavCount();
+            renderSavedModal();
+          });
+          savedContainer.append(row);
+        });
+      }
+
+      function startExperience() {
+        if (isPlaying) return;
+
+        isPlaying = true;
+        audio.volume = 0.4;
+        audio.play().catch(() => {});
+
+        overlay.classList.add('dismissed');
+
+        if (queue.length) {
+          advanceToNextItem();
+        } else {
+          topUpQueue();
+          scheduleNext(450);
+        }
+      }
+
+      playButton.addEventListener('click', startExperience);
+      overlay.addEventListener('click', event => {
+        if (event.target === overlay) startExperience();
+      });
+
+      stage.addEventListener('dblclick', skipItem);
+
+      window.addEventListener('keydown', event => {
+        if (event.code === 'Space' && !isPlaying) {
+          event.preventDefault();
+          startExperience();
+        } else if (event.code === 'ArrowRight' && isPlaying) {
+          event.preventDefault();
+          skipItem();
+        } else if (event.code === 'ArrowLeft' && isPlaying) {
+          event.preventDefault();
+          prevItem();
+        }
+      });
+
+      updateUIStrings();
+      initAI().then(() => topUpQueue());
+    })();
+  </script>
+</body>
+</html>

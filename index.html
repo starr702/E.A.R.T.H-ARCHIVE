@@ -34,7 +34,6 @@
       font-family: "Courier New", Courier, monospace;
     }
 
-    /* Curved CRT Monitor Casing */
     .monitor {
       position: relative;
       isolation: isolate;
@@ -48,7 +47,6 @@
       box-shadow: 0 30px 80px rgba(0, 0, 0, .7), inset 0 2px 4px rgba(255, 255, 255, .1);
     }
 
-    /* Curved CRT Screen */
     .screen {
       position: relative;
       width: 100%;
@@ -62,7 +60,6 @@
       box-shadow: inset 0 0 40px rgba(0, 0, 0, .12), inset 0 0 4px rgba(0, 0, 0, .25);
     }
 
-    /* Scanlines and vignette */
     .screen::before {
       content: "";
       position: absolute;
@@ -76,7 +73,6 @@
       background-size: 100% 4px, 100% 100%;
     }
 
-    /* Start screen */
     .start-overlay {
       position: absolute;
       inset: 0;
@@ -136,7 +132,6 @@
     }
     .start-btn:active { transform: translate(1px, 1px); }
 
-    /* Modals */
     .modal-overlay {
       position: absolute;
       inset: 0;
@@ -193,8 +188,13 @@
     .saved-thumb { width: 42px; height: 42px; object-fit: cover; border: 1px solid #888; }
     .saved-info { flex-grow: 1; overflow: hidden; }
     .saved-title { font-weight: bold; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #111; }
+    .saved-title a { color: inherit; text-decoration: none; }
+    .saved-title a:hover { text-decoration: underline; }
+    .saved-remove {
+      background: #d4d8d0; border: 1px solid #889088; color: #7a1f1f; cursor: pointer;
+      font: 700 11px "Courier New", Courier, monospace; padding: 2px 6px;
+    }
 
-    /* Main Content Layout */
     .content {
       position: absolute;
       inset: 0;
@@ -221,7 +221,6 @@
 
     .slide.active { opacity: 1; transform: scale(1); }
 
-    /* Wikipedia Card Container */
     .wiki-card {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
@@ -290,13 +289,12 @@
     .ambient-name { font-size: 11px; letter-spacing: .15em; }
     .ambient-detail { font-size: 9px; letter-spacing: .08em; opacity: .7; }
 
-    /* Footer */
     .footer {
       display: flex; justify-content: space-between; align-items: center; gap: 8px; min-height: 32px; color: #3b423c; font-size: 11px; font-weight: bold;
     }
     .footer-brand { display: inline-flex; align-items: center; gap: 8px; }
     .signal-dot { width: 24px; height: 24px; flex: 0 0 auto; border-radius: 50%; object-fit: cover; border: 1px solid #444; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
-    
+
     .action-btns { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
 
     .retro-action-btn {
@@ -333,7 +331,7 @@
       <div class="modal-overlay" id="info-modal">
         <div class="modal-box">
           <div class="modal-header">
-            <span id="modal-info-title">ℹ️ SYSTEM INFO</span>
+            <span id="modal-info-title">ℹ SYSTEM INFO</span>
             <button class="modal-close" id="close-info-modal">✕</button>
           </div>
           <div class="modal-body" id="info-body-content"></div>
@@ -354,7 +352,6 @@
 
         <footer class="footer">
           <div class="footer-brand">
-            <!-- تم تصحيح اسم الملف هنا ليكون Earth.gif بالحرف الكبير -->
             <img src="Earth.gif" alt="Earth" class="signal-dot" aria-hidden="true">
             <span id="loading-status">loading...</span>
             <button id="info-btn" type="button" class="retro-action-btn" title="Queue info">
@@ -363,28 +360,22 @@
           </div>
 
           <div class="action-btns">
-            <!-- Previous -->
             <button id="prev-btn" type="button" class="retro-action-btn" title="Previous Image">
               <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
-            <!-- Skip / Next -->
             <button id="skip-btn" type="button" class="retro-action-btn" title="Skip to Next">
               <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
-            <!-- Pause / Resume -->
             <button id="pause-btn" type="button" class="retro-action-btn" title="Pause / Resume">
               <svg id="pause-icon" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
             </button>
-            <!-- Save -->
             <button id="save-btn" type="button" class="retro-action-btn" title="Save to archive">
               <svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
             </button>
-            <!-- Favorites -->
             <button id="fav-btn" type="button" class="retro-action-btn" title="View Saved">
               <svg viewBox="0 0 24 24" style="fill:currentColor;"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               <span id="fav-count" class="btn-label">0</span>
             </button>
-            <!-- Language Toggle -->
             <button id="lang-btn" type="button" class="retro-action-btn" title="Switch Language">
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
               <span id="lang-label" class="btn-label">AR</span>
@@ -393,7 +384,6 @@
         </footer>
       </div>
 
-      <!-- Start screen -->
       <div class="start-overlay" id="start-overlay">
         <img src="Earth.gif" alt="Earth" class="earth-mark" aria-hidden="true">
         <h1 class="brand" id="start-brand">E.A.R.T.H.</h1>
@@ -412,7 +402,8 @@
     <source src="Coloured Candles.mb3.mp3" type="audio/mpeg">
   </audio>
 
-  <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers@2.6.0"></script>
+  <!-- NOTE: the old <script src=".../transformers@2.6.0"> tag was removed.
+       The library is now loaded with a dynamic ES import inside loadAI(). -->
 
   <script>
     (() => {
@@ -420,7 +411,6 @@
 
       const audio = document.getElementById('bg-music');
       const overlay = document.getElementById('start-overlay');
-      const stage = document.getElementById('image-stage');
       const playButton = document.getElementById('play-btn');
       const loadingStatus = document.getElementById('loading-status');
       const saveBtn = document.getElementById('save-btn');
@@ -433,6 +423,7 @@
       const infoBtn = document.getElementById('info-btn');
       const langBtn = document.getElementById('lang-btn');
       const langLabel = document.getElementById('lang-label');
+      const stage = document.getElementById('image-stage');
 
       const savedModal = document.getElementById('saved-modal');
       const closeModal = document.getElementById('close-modal');
@@ -456,14 +447,18 @@
           subtitle: "Random Wikipedia Visual Experience<br>Quiet visuals from the world around us.",
           startBtn: "PRESS [SPACE] OR CLICK TO START",
           ready: "Ready",
+          loading: "loading...",
+          aiLoading: "loading AI model...",
           savedModalTitle: "📁 SAVED ARCHIVE",
-          infoModalTitle: "ℹ️ SYSTEM INFO",
+          infoModalTitle: "ℹ SYSTEM INFO",
           noSaved: "No saved items yet.",
+          caption: "Visual archive entry from Wikipedia.",
+          captionCommons: "Featured picture from Wikimedia Commons.",
           infoText: `
             <p><strong>What is this status counter?</strong></p>
-            <p>It displays the background buffer queue (e.g., <code>loading... (5/12)</code>).</p>
-            <p>The system pre-fetches high-quality images and applies AI filtering in the background for zero-wait transitions.</p>
-            <p>When it shows <strong>Ready</strong>, the queue is fully primed!</p>
+            <p>It shows the background buffer queue (e.g., <code>loading... (5/12)</code>).</p>
+            <p>The system pre-fetches high-resolution images from Wikipedia and Wikimedia Commons featured pictures, then an AI model (CLIP) checks each one so people, maps, logos and diagrams are dropped before they reach the screen.</p>
+            <p>When it shows <strong>Ready</strong>, the queue is full.</p>
           `,
           langToggle: "AR"
         },
@@ -473,14 +468,18 @@
           subtitle: "تجربة بصرية عشوائية من ويكيبيديا<br>لقطات هادئة من عالمنا ومحيطنا.",
           startBtn: "اضغط [مفتاح المسافة] أو انقر للبدء",
           ready: "جاهز",
+          loading: "تحميل...",
+          aiLoading: "تحميل نموذج الذكاء الاصطناعي...",
           savedModalTitle: "📁 الأرشيف المحفوظ",
-          infoModalTitle: "ℹ️ معلومات النظام",
+          infoModalTitle: "ℹ معلومات النظام",
           noSaved: "لا توجد عناصر محفوظة حتى الآن.",
+          caption: "أرشيف ويكيبيديا البصري العشوائي",
+          captionCommons: "صورة مميزة من ويكيميديا كومنز",
           infoText: `
             <p><strong>ما هو عداد التحميل؟</strong></p>
             <p>يوضح حالة الطابور الخلفي (مثلاً: <code>تحميل... (5/12)</code>).</p>
-            <p>يقوم النظام بتحميل صور عالية الجودة وفلترتها مسبقاً في الخلفية لتتغير الصور بسلاسة تامة دون أي انتظار.</p>
-            <p>عندما يظهر <strong>جاهز</strong>، يكون الطابور ممتلئاً تماماً!</p>
+            <p>يجلب النظام صوراً عالية الدقة من ويكيبيديا ومن الصور المميزة في ويكيميديا كومنز، ثم يفحص نموذج ذكاء اصطناعي (CLIP) كل صورة ويستبعد الأشخاص والخرائط والشعارات والمخططات قبل ظهورها.</p>
+            <p>عندما يظهر <strong>جاهز</strong>، يكون الطابور ممتلئاً.</p>
           `,
           langToggle: "EN"
         }
@@ -490,16 +489,21 @@
       const MAX_QUEUE_SIZE = 12;
       const MAX_CONCURRENT_FETCHES = 3;
       const REQUEST_TIMEOUT_MS = 10000;
-      const MAX_CANDIDATES_PER_WORKER = 12;
+      const MAX_CANDIDATES_PER_WORKER = 14;
+      const AI_WAIT_MS = 45000;
 
       const queue = [];
-      const seenTitles = new Set();
+      const seenKeys = new Set();
       const history = [];
       let historyIndex = -1;
 
-      let savedItems = JSON.parse(localStorage.getItem('earth_saved_items') || '[]');
+      let savedItems = [];
+      try { savedItems = JSON.parse(localStorage.getItem('earth_saved_items') || '[]'); } catch (e) { savedItems = []; }
 
       let classifier = null;
+      let aiState = 'idle';          // idle | loading | ready | failed
+      let aiReady = null;            // promise
+      let epoch = 0;                 // bumped when language changes so stale fetches are dropped
       let inFlight = 0;
       let isPlaying = false;
       let isPaused = false;
@@ -509,9 +513,9 @@
       let currentItem = null;
       let refillTimer = null;
 
-      function updateFavCount() {
-        favCount.textContent = savedItems.length;
-      }
+      /* ---------- UI helpers ---------- */
+
+      function updateFavCount() { favCount.textContent = savedItems.length; }
       updateFavCount();
 
       function updateUIStrings() {
@@ -526,78 +530,168 @@
         infoBodyContent.innerHTML = s.infoText;
         updateLoadingText();
       }
+      infoBodyContent.innerHTML = strings.en.infoText;
 
       function updateLoadingText() {
         const s = strings[currentLang];
-        if (queue.length < MAX_QUEUE_SIZE) {
-          loadingStatus.textContent = `${currentLang === 'ar' ? 'تحميل...' : 'loading...'} (${queue.length}/${MAX_QUEUE_SIZE})`;
+        if (aiState === 'loading' && queue.length === 0) {
+          loadingStatus.textContent = s.aiLoading;
+        } else if (queue.length < MAX_QUEUE_SIZE) {
+          loadingStatus.textContent = `${s.loading} (${queue.length}/${MAX_QUEUE_SIZE})`;
         } else {
-          loadingStatus.textContent = `${currentLang === 'ar' ? 'تحميل...' : 'loading...'} (${s.ready})`;
+          loadingStatus.textContent = s.ready;
         }
       }
 
+      /* ---------- Search topics ---------- */
+
       const visualCategoriesEn = [
-        'nebula', 'galaxy', 'astronomical object', 'mountain range', 'waterfall',
-        'coral reef', 'aurora', 'botanical garden', 'wildlife photography',
-        'historic architecture', 'ancient temple', 'sculpture', 'macro photography',
-        'forest landscape', 'ocean wave', 'canyon', 'glacier', 'volcano',
-        'crystal', 'traditional art', 'archaeological site', 'national park'
+        'nebula', 'galaxy', 'mountain range', 'waterfall', 'coral reef', 'aurora',
+        'botanical garden', 'wildlife', 'historic architecture', 'ancient temple',
+        'sculpture', 'macro photography', 'forest landscape', 'ocean wave', 'canyon',
+        'glacier', 'volcano', 'crystal', 'archaeological site', 'national park',
+        'desert dunes', 'lake sunrise', 'butterfly', 'flower', 'bird', 'cathedral interior',
+        'island', 'cave', 'milky way', 'tide pool'
       ];
 
       const visualCategoriesAr = [
-        'سديم', 'مجرة', 'جبل', 'شلال', 'شعب مرجانية', 'شفق قطبي', 
-        'حديقة نباتية', 'عمارة تاريخية', 'معبد أثري', 'تمثال', 'تصوير ماكرو',
-        'غابة', 'محيط', 'بركان', 'بلورة', 'فن تقليدي', 'موقع أثري', 'محميّة طبيعية'
+        'سديم', 'مجرة', 'جبل', 'شلال', 'شعب مرجانية', 'شفق قطبي',
+        'حديقة نباتية', 'عمارة تاريخية', 'معبد أثري', 'تمثال', 'غابة', 'محيط',
+        'بركان', 'بلورة', 'موقع أثري', 'محمية طبيعية', 'صحراء', 'كثبان رملية',
+        'فراشة', 'زهرة', 'طائر', 'كهف', 'جزيرة', 'بحيرة'
       ];
 
-      const blockedTextTermsEn = [
-        'born', 'died', 'politician', 'actor', 'actress', 'player', 'singer',
-        'musician', 'writer', 'biography', 'president', 'minister', 'officer',
-        'general', 'war', 'battle', 'murder', 'assassination'
+      /* ---------- Text filtering (word-boundary aware) ---------- */
+
+      const peopleRegexEn = /\b(born|died)\b[^.]{0,60}\b(1[0-9]{3}|20[0-9]{2})\b|\b(politician|actor|actress|footballer|singer|musician|novelist|biography|president|prime minister|minister|officer|assassination|murder)\b/i;
+      const peopleCategoryRegex = /(births|deaths|living people|مواليد|وفيات)/i;
+      const blockedTermsAr = ['مواليد', 'وفيات', 'سياسي', 'ممثل', 'لاعب', 'مغني', 'روائي', 'سيرة ذاتية', 'رئيس', 'وزير', 'اغتيال', 'قتل'];
+
+      const BAD_FILE_WORDS = /(^|[\s_\-.()])(map|maps|flag|logo|coat|arms|locator|location|diagram|icon|symbol|seal|signature|chart|graph|poster|cover|screenshot|portrait|plan|emblem|banner|infobox|stub|crest)([\s_\-.()]|$)/i;
+
+      function textLooksLikePerson(page) {
+        const title = (page.title || '');
+        const extract = (page.extract || '');
+        const cats = (page.categories || []).map(c => c.title || '').join(' ');
+        if (peopleCategoryRegex.test(cats)) return true;
+        if (currentLang === 'ar') {
+          const full = `${title} ${extract}`;
+          return blockedTermsAr.some(t => full.includes(t));
+        }
+        return peopleRegexEn.test(`${title}. ${extract}`);
+      }
+
+      function fileNameLooksBad(name) {
+        if (!name) return false;
+        if (/\.(svg|gif|tif|tiff)$/i.test(name)) return true;
+        return BAD_FILE_WORDS.test(name);
+      }
+
+      function sizeLooksGood(w, h) {
+        if (!w || !h) return false;
+        if (w < 900 || h < 500) return false;
+        const ratio = w / h;
+        return ratio >= 0.55 && ratio <= 2.6;
+      }
+
+      /* ---------- AI: CLIP zero-shot image classification ---------- */
+
+      // Things we WANT to see
+      const GOOD_LABELS = [
+        'a landscape photo of mountains, valleys or hills',
+        'a photo of the ocean, a beach or the sea',
+        'a photo of a forest, trees or a jungle',
+        'a photo of a waterfall, river or lake',
+        'a photo of the night sky, stars, a nebula or a galaxy',
+        'an aurora or a dramatic sunset sky',
+        'a close-up photo of a flower, plant or insect',
+        'a photo of a wild animal or a bird in nature',
+        'a photo of a coral reef or underwater scene',
+        'a photo of a volcano, glacier or desert',
+        'a photo of historic architecture, a temple or a castle',
+        'a photo of a sculpture, artwork or ancient artifact',
+        'a photo of a crystal or mineral'
       ];
 
-      const blockedTextTermsAr = [
-        'مواليد', 'وفيات', 'سياسي', 'ممثل', 'لاعب', 'مغني', 'كاتب', 'سيرة',
-        'رئيس', 'وزير', 'ضابط', 'حرب', 'معركة', 'قتل', 'اغتيال'
+      // Things we do NOT want to see
+      const BAD_LABELS = [
+        'a photo of a person',
+        'a portrait of a face',
+        'a group of people or a crowd',
+        'a photo of a soldier or a military scene',
+        'a map',
+        'a flag, logo or coat of arms',
+        'a diagram, chart or infographic',
+        'a page of text or a document',
+        'a screenshot or a user interface',
+        'a cartoon or an illustration of a person',
+        'a car, vehicle or an aircraft',
+        'a tiny object on a plain white background',
+        'a photo of a modern city street or a building facade with people'
       ];
 
-      async function initAI() {
+      const ALL_LABELS = GOOD_LABELS.concat(BAD_LABELS);
+      const BAD_SET = new Set(BAD_LABELS);
+
+      const BAD_SUM_LIMIT = 0.30;    // total probability on unwanted labels
+      const GOOD_SUM_MIN = 0.55;     // total probability needed on wanted labels
+      const PERSON_LIMIT = 0.12;     // any of the person-ish labels above this => reject
+
+      const PERSON_LABELS = new Set([
+        'a photo of a person', 'a portrait of a face', 'a group of people or a crowd',
+        'a photo of a soldier or a military scene', 'a cartoon or an illustration of a person'
+      ]);
+
+      async function loadAI() {
+        aiState = 'loading';
+        updateLoadingText();
         try {
-          if (window.transformers) {
-            classifier = await window.transformers.pipeline('image-classification', 'Xenova/mobilenetv2-1.0-224', {
-              quantized: true
-            });
-          }
+          const mod = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+          mod.env.allowLocalModels = false;
+          classifier = await mod.pipeline('zero-shot-image-classification', 'Xenova/clip-vit-base-patch32', { quantized: true });
+          aiState = 'ready';
         } catch (e) {
-          console.log("AI fallback mode");
+          console.warn('AI model failed to load, using rule-based filtering only.', e);
+          aiState = 'failed';
+        }
+        updateLoadingText();
+      }
+
+      // CLIP runs one image at a time so 3 parallel workers don't freeze the page.
+      let aiChain = Promise.resolve();
+      function classify(url) {
+        const run = aiChain.then(() => classifier(url, ALL_LABELS, { hypothesis_template: 'This is {}.' }));
+        aiChain = run.catch(() => {});
+        return run;
+      }
+
+      async function aiImageCheck(imageUrl) {
+        if (!classifier) return { ok: true, tag: null };
+        try {
+          const results = await classify(imageUrl);
+          let good = 0, bad = 0, personMax = 0;
+          let topGood = null;
+          for (const r of results) {
+            if (BAD_SET.has(r.label)) {
+              bad += r.score;
+              if (PERSON_LABELS.has(r.label)) personMax = Math.max(personMax, r.score);
+            } else {
+              good += r.score;
+              if (!topGood || r.score > topGood.score) topGood = r;
+            }
+          }
+          const ok = bad <= BAD_SUM_LIMIT && personMax <= PERSON_LIMIT && good >= GOOD_SUM_MIN;
+          return { ok, tag: topGood ? topGood.label : null };
+        } catch (err) {
+          console.warn('classify error', err);
+          return { ok: true, tag: null };
         }
       }
 
-      async function aiFilterCheck(page, imageUrl) {
-        const title = (page.title || '').toLowerCase();
-        const extract = (page.extract || '').toLowerCase();
-        const categories = (page.categories || []).map(c => (c.title || '').toLowerCase()).join(' ');
-        const fullText = title + ' ' + extract + ' ' + categories;
-
-        const blocked = currentLang === 'ar' ? blockedTextTermsAr : blockedTextTermsEn;
-        for (let term of blocked) {
-          if (fullText.includes(term)) return false;
-        }
-
-        if (classifier) {
-          try {
-            const results = await classifier(imageUrl);
-            const hasPersonScore = results.some(res => {
-              const label = (res.label || '').toLowerCase();
-              return (label.includes('person') || label.includes('suit') || label.includes('face') || label.includes('groom') || label.includes('wig')) && res.score > 0.25;
-            });
-            if (hasPersonScore) return false;
-          } catch (err) {}
-        }
-        return true;
-      }
+      /* ---------- Network helpers ---------- */
 
       function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+      function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
       async function fetchJson(url) {
         const controller = new AbortController();
@@ -614,7 +708,7 @@
       async function decodeImage(url) {
         const image = new Image();
         image.decoding = 'async';
-        image.loading = 'eager';
+        image.crossOrigin = 'anonymous';
         image.src = url;
         if (typeof image.decode === 'function') {
           await image.decode();
@@ -627,52 +721,129 @@
         return image;
       }
 
-      async function fetchCandidate() {
-        const categoriesList = currentLang === 'ar' ? visualCategoriesAr : visualCategoriesEn;
-        const randomCategory = categoriesList[Math.floor(Math.random() * categoriesList.length)];
+      /* ---------- Source 1: Wikipedia articles ---------- */
+
+      async function fetchWikipediaCandidate() {
+        const list = currentLang === 'ar' ? visualCategoriesAr : visualCategoriesEn;
+        const term = pick(list);
         const domain = currentLang === 'ar' ? 'ar.wikipedia.org' : 'en.wikipedia.org';
 
-        const searchParams = new URLSearchParams({
+        const params = new URLSearchParams({
           action: 'query',
           generator: 'search',
-          gsrsearch: randomCategory,
+          gsrsearch: term,
           gsrnamespace: '0',
-          gsrlimit: '15',
+          gsrlimit: '20',
+          gsroffset: String(Math.floor(Math.random() * 40)),
           prop: 'pageimages|categories|extracts',
-          piprop: 'thumbnail',
+          piprop: 'thumbnail|original|name',
           pithumbsize: '1100',
           exintro: '1',
           explaintext: '1',
           exchars: '500',
-          cllimit: '40',
+          exlimit: 'max',
+          cllimit: 'max',
           clshow: '!hidden',
           format: 'json',
           formatversion: '2',
           origin: '*'
         });
 
-        const data = await fetchJson(`https://${domain}/w/api.php?` + searchParams.toString());
+        const data = await fetchJson(`https://${domain}/w/api.php?` + params.toString());
         const pages = data && data.query && data.query.pages;
         if (!pages || pages.length === 0) return null;
 
-        const page = pages[Math.floor(Math.random() * pages.length)];
-        if (!page || !page.title || !page.thumbnail || !page.thumbnail.source) return null;
-        if (seenTitles.has(page.title)) return null;
+        // Pre-filter cheaply (no AI yet), then pick randomly among survivors.
+        const survivors = pages.filter(p =>
+          p && p.title && p.thumbnail && p.thumbnail.source &&
+          !seenKeys.has('w:' + p.title) &&
+          !fileNameLooksBad(p.pageimage) &&
+          sizeLooksGood((p.original && p.original.width) || 0, (p.original && p.original.height) || 0) &&
+          !textLooksLikePerson(p)
+        );
+        if (survivors.length === 0) return null;
+
+        const page = pick(survivors);
+        seenKeys.add('w:' + page.title);
 
         const imageUrl = page.thumbnail.source;
-        const isClean = await aiFilterCheck(page, imageUrl);
-        if (!isClean) return null;
+        const verdict = await aiImageCheck(imageUrl);
+        if (!verdict.ok) return null;
 
         await decodeImage(imageUrl);
-        seenTitles.add(page.title);
-
-        const articleUrl = `https://${domain}/wiki/${encodeURIComponent(page.title.replace(/ /g, '_'))}`;
 
         return {
           title: page.title,
           imageUrl,
-          url: articleUrl
+          url: `https://${domain}/wiki/${encodeURIComponent(page.title.replace(/ /g, '_'))}`,
+          source: 'wikipedia',
+          tag: verdict.tag
         };
+      }
+
+      /* ---------- Source 2: Wikimedia Commons featured pictures ---------- */
+
+      async function fetchCommonsCandidate() {
+        const term = pick(visualCategoriesEn);
+
+        const params = new URLSearchParams({
+          action: 'query',
+          generator: 'search',
+          gsrsearch: `incategory:"Featured pictures on Wikimedia Commons" ${term}`,
+          gsrnamespace: '6',
+          gsrlimit: '20',
+          gsroffset: String(Math.floor(Math.random() * 30)),
+          prop: 'imageinfo',
+          iiprop: 'url|size|mime',
+          iiurlwidth: '1100',
+          format: 'json',
+          formatversion: '2',
+          origin: '*'
+        });
+
+        const data = await fetchJson('https://commons.wikimedia.org/w/api.php?' + params.toString());
+        const pages = data && data.query && data.query.pages;
+        if (!pages || pages.length === 0) return null;
+
+        const survivors = pages.filter(p => {
+          const ii = p && p.imageinfo && p.imageinfo[0];
+          if (!ii || !ii.thumburl) return false;
+          if (!/^image\/(jpeg|png|webp)$/.test(ii.mime || '')) return false;
+          if (seenKeys.has('c:' + p.title)) return false;
+          if (fileNameLooksBad(p.title)) return false;
+          return sizeLooksGood(ii.width, ii.height);
+        });
+        if (survivors.length === 0) return null;
+
+        const page = pick(survivors);
+        seenKeys.add('c:' + page.title);
+        const ii = page.imageinfo[0];
+
+        const verdict = await aiImageCheck(ii.thumburl);
+        if (!verdict.ok) return null;
+
+        await decodeImage(ii.thumburl);
+
+        const cleanTitle = page.title
+          .replace(/^File:/i, '')
+          .replace(/\.[a-z0-9]+$/i, '')
+          .replace(/_/g, ' ');
+
+        return {
+          title: cleanTitle,
+          imageUrl: ii.thumburl,
+          url: ii.descriptionurl,
+          source: 'commons',
+          tag: verdict.tag
+        };
+      }
+
+      async function fetchCandidate() {
+        // Wait (bounded) for the AI model so early images are also classified.
+        if (aiReady && aiState === 'loading') {
+          await Promise.race([aiReady, sleep(AI_WAIT_MS)]);
+        }
+        return Math.random() < 0.5 ? fetchCommonsCandidate() : fetchWikipediaCandidate();
       }
 
       async function fetchUsableItem() {
@@ -687,6 +858,8 @@
         return null;
       }
 
+      /* ---------- Queue ---------- */
+
       function scheduleQueueRefill(delay = 0) {
         if (refillTimer !== null) return;
         refillTimer = setTimeout(() => {
@@ -698,11 +871,12 @@
       function topUpQueue() {
         while (inFlight < MAX_CONCURRENT_FETCHES && queue.length + inFlight < MAX_QUEUE_SIZE) {
           inFlight++;
+          const myEpoch = epoch;
           let receivedItem = false;
 
           fetchUsableItem()
             .then(item => {
-              if (item) {
+              if (item && myEpoch === epoch) {
                 receivedItem = true;
                 queue.push(item);
                 updateLoadingText();
@@ -721,8 +895,11 @@
         }
       }
 
+      /* ---------- Rendering ---------- */
+
       function makeSlideContent(slide, item) {
         slide.replaceChildren();
+        const s = strings[currentLang];
 
         const card = document.createElement('div');
         card.className = 'wiki-card';
@@ -734,7 +911,6 @@
         image.className = 'photo';
         image.alt = item.title;
         image.decoding = 'async';
-        image.loading = 'eager';
         image.src = item.imageUrl;
         photoWrap.appendChild(image);
 
@@ -743,20 +919,22 @@
 
         const caption = document.createElement('div');
         caption.className = 'caption';
-        
+
         const link = document.createElement('a');
         link.href = item.url;
         link.target = '_blank';
+        link.rel = 'noopener';
         link.textContent = item.title;
-        
+
         caption.appendChild(link);
-        caption.append(` — ${currentLang === 'ar' ? 'أرشيف ويكيبيديا البصري العشوائي' : 'Visual archive entry from Wikipedia.'}`);
+        caption.append(` — ${item.source === 'commons' ? s.captionCommons : s.caption}`);
 
         const wikiBtn = document.createElement('a');
         wikiBtn.className = 'wiki-icon-link';
         wikiBtn.href = item.url;
         wikiBtn.target = '_blank';
-        wikiBtn.title = 'Open Wikipedia';
+        wikiBtn.rel = 'noopener';
+        wikiBtn.title = 'Open source page';
         wikiBtn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/></svg>';
 
         captionBox.append(caption, wikiBtn);
@@ -817,12 +995,12 @@
         topUpQueue();
       }
 
-      function prevItem() {
+      async function prevItem() {
         if (!isPlaying || isAdvancing) return;
         if (historyIndex > 0) {
           if (timer) clearTimeout(timer);
           historyIndex--;
-          displayItem(history[historyIndex]);
+          await displayItem(history[historyIndex]);
           scheduleNext();
         }
       }
@@ -838,9 +1016,10 @@
         isPlaying = true;
         overlay.classList.add('dismissed');
         audio.play().catch(() => {});
-        initAI();
         topUpQueue();
       }
+
+      /* ---------- Events ---------- */
 
       playButton.addEventListener('click', startApp);
       document.addEventListener('keydown', (e) => {
@@ -852,14 +1031,16 @@
 
       prevBtn.addEventListener('click', prevItem);
       skipBtn.addEventListener('click', skipItem);
+      stage.addEventListener('dblclick', skipItem);
 
       langBtn.addEventListener('click', () => {
         currentLang = currentLang === 'en' ? 'ar' : 'en';
         document.documentElement.lang = currentLang;
         document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-        
+
+        epoch++;                 // invalidates any in-flight fetches from the old language
         queue.length = 0;
-        seenTitles.clear();
+        seenKeys.clear();
         history.length = 0;
         historyIndex = -1;
         currentItem = null;
@@ -879,12 +1060,16 @@
         }
       });
 
+      function persistSaved() {
+        try { localStorage.setItem('earth_saved_items', JSON.stringify(savedItems)); } catch (e) {}
+        updateFavCount();
+      }
+
       saveBtn.addEventListener('click', () => {
         if (!currentItem) return;
-        if (!savedItems.some(i => i.title === currentItem.title)) {
+        if (!savedItems.some(i => i.url === currentItem.url)) {
           savedItems.push(currentItem);
-          localStorage.setItem('earth_saved_items', JSON.stringify(savedItems));
-          updateFavCount();
+          persistSaved();
           saveBtn.style.background = '#8fa391';
           setTimeout(() => saveBtn.style.background = '', 1200);
         }
@@ -911,16 +1096,47 @@
           savedContainer.append(empty);
           return;
         }
-        savedItems.forEach((item) => {
+        savedItems.forEach((item, index) => {
           const row = document.createElement('div');
           row.className = 'saved-item-row';
-          row.innerHTML = `
-            <img class="saved-thumb" src="${item.imageUrl}">
-            <div class="saved-info"><div class="saved-title">${item.title}</div></div>
-          `;
+
+          const thumb = document.createElement('img');
+          thumb.className = 'saved-thumb';
+          thumb.src = item.imageUrl;
+          thumb.alt = '';
+
+          const info = document.createElement('div');
+          info.className = 'saved-info';
+          const titleBox = document.createElement('div');
+          titleBox.className = 'saved-title';
+          const a = document.createElement('a');
+          a.href = item.url;
+          a.target = '_blank';
+          a.rel = 'noopener';
+          a.textContent = item.title;     // textContent => no HTML injection
+          titleBox.append(a);
+          info.append(titleBox);
+
+          const del = document.createElement('button');
+          del.className = 'saved-remove';
+          del.type = 'button';
+          del.textContent = '✕';
+          del.addEventListener('click', () => {
+            savedItems.splice(index, 1);
+            persistSaved();
+            renderSavedModal();
+          });
+
+          row.append(thumb, info, del);
           savedContainer.append(row);
         });
       }
+
+      /* ---------- Boot ---------- */
+
+      updateUIStrings();
+      // Start downloading the model right away so it's ready by the time the user presses start.
+      aiReady = loadAI();
     })();
   </script>
 </body>
